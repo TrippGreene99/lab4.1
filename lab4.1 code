@@ -1,0 +1,141 @@
+import java.util.Scanner;
+
+
+
+public class Account {
+    private int accountNumber;
+    private double balance;
+    private static int AccountCount=1001;
+    public Account() {
+        this.accountNumber = AccountCount++;
+        this.balance = 0;
+    }
+    public Account(double balance) {
+        this.accountNumber = AccountCount++;
+        this.balance = balance;
+    }
+
+    public int getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(int accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+    public void withdraw(double amount){
+        balance-=amount;
+    }
+    public void deposit(double amount){
+        balance+=amount;
+    }
+}
+
+public class Checking extends Account{
+
+    public Checking(double balance) {
+        super(balance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        super.withdraw(amount);
+        if(getBalance()<=0)
+        {
+            System.out.println("Charging an overdraft fee of $20 because account is below $0");
+            setBalance(getBalance()-20);
+        }
+    }
+
+}
+
+public class Savings extends Account  {
+    public int depositeCount=0;
+    public Savings(double balance) {
+        super(balance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if(getBalance()>=amount){
+            super.withdraw(amount);
+            if(getBalance()<500)
+            {
+                System.out.println("Charging a fee of $10 because you are below $500");
+                setBalance(getBalance()-10);
+            }
+        }else
+            System.out.println("Insufficient Funds in Account...");
+
+    }
+
+    @Override
+    public void deposit(double amount) {
+
+        super.deposit(amount);
+        this.depositeCount++;
+        System.out.println("This is deposite "+this.depositeCount+" to this account");
+        if(this.depositeCount>=5)
+        {
+            System.out.println("Charging a fee of $10");
+            setBalance(getBalance()-10);
+        }
+    }
+    public void addIntrest(){
+        double intrest=getBalance()*1.5/100;
+        System.out.println("Customer earned "+intrest+" in interest ");
+        setBalance(getBalance()+intrest);
+    }
+
+}
+
+public class BankMain {
+
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        double bal;
+        System.out.print("Enter the Initial Balance of Checking Account : ");
+        bal=Double.parseDouble(sc.nextLine());
+        Checking c=new Checking(bal);
+        System.out.print("Enter the Initial Balance of Savings Account : ");
+        bal=Double.parseDouble(sc.nextLine());
+        Savings s=new Savings(bal);
+        while(true){
+            System.out.print("1.Withdraw from Checking"
+                    + "\n2.Withdraw from savings"
+                    + "\n3.Deposit to Checkings"
+                    + "\n4.Deposit to Savings"
+                    + "\n5.Balance of Checking"
+                    + "\n6.Balance of Savings"
+                    + "\n7.Award Intrest to savings now"
+                    + "\n8.Quit"
+                    + "\nEnter Your Choice : ");
+            int ch=Integer.parseInt(sc.nextLine());
+            switch(ch){
+                case 1:  System.out.print("Enter amount to Withdraw : ");
+                    bal=Double.parseDouble(sc.nextLine());
+                    c.withdraw(bal);break;
+                case 2:  System.out.print("Enter amount to Withdraw : ");
+                    bal=Double.parseDouble(sc.nextLine());
+                    s.withdraw(bal);break;
+                case 3: System.out.print("Enter amount to Deposite : ");
+                    bal=Double.parseDouble(sc.nextLine());
+                    c.deposit(bal);break;
+                case 4: System.out.print("Enter amount to Deposite : ");
+                    bal=Double.parseDouble(sc.nextLine());
+                    s.deposit(bal);break;
+                case 5:System.out.println("\nAcount Number : "+c.getAccountNumber()+"\t Balance : "+c.getBalance());break;
+                case 6:System.out.println("\nAcount Number : "+s.getAccountNumber()+"\t Balance : "+s.getBalance());break;
+                case 7:s.addIntrest();break;
+                case 8:System.exit(0);
+            }
+        }
+    }
+}
